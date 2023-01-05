@@ -33,7 +33,7 @@
   "generate_dictionary": true,
   "fulltext_view_enabled": true,
   "use_nonpersistent_fulltext_id": true,
-  "languages": ["muira", "russian"],
+  "languages": ["muira", "dargwa", "russian"],
   "input_methods": ["normal"],
   "interface_languages": [
     "en",
