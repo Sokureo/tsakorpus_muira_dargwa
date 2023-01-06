@@ -195,12 +195,12 @@ class SentenceViewer:
         if not gramdic:
             try:
                 return render_template('search_results/grammar_popup.html', grAnaPart=grAnaPart).strip()
-            except AttributeError:
+            except (AttributeError, RuntimeError):
                 return self.render_jinja_html('../search/web_app/templates/search_results',
                                               'grammar_popup.html', grAnaPart=grAnaPart).strip()
         try:
             return render_template('search_results/gramdic_popup.html', grAnaPart=grAnaPart).strip()
-        except AttributeError:
+        except (AttributeError, RuntimeError):
             return self.render_jinja_html('../search/web_app/templates/search_results',
                                           'gramdic_popup.html', grAnaPart=grAnaPart).strip()
 
@@ -253,7 +253,7 @@ class SentenceViewer:
             ana4template['other_fields'].sort(key=lambda x: x['key'])
         try:
             return render_template('search_results/analysis_div.html', ana=ana4template).strip()
-        except AttributeError:
+        except (AttributeError, RuntimeError):
             return self.render_jinja_html('../search/web_app/templates/search_results',
                                           'analysis_div.html', ana=ana4template).strip()
 
@@ -276,7 +276,7 @@ class SentenceViewer:
                 data4template['analyses'].append(ana4template)
         try:
             return render_template('search_results/analyses_popup.html', data=data4template)
-        except AttributeError:
+        except (AttributeError, RuntimeError):
             return self.render_jinja_html('../search/web_app/templates/search_results',
                                           'analyses_popup.html', data=data4template)
 
