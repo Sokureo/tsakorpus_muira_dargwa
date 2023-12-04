@@ -49,6 +49,7 @@ class CorpusSettings:
         self.negative_search_enabled = True
         self.gloss_search_enabled = True
         self.year_sort_enabled = False
+        self.sent_id_sort_enabled = False
         self.fulltext_view_enabled = False
         self.max_docs_retrieve = 9999
         self.max_words_in_sentence = 40
@@ -98,6 +99,7 @@ class CorpusSettings:
         # Server configuration
         self.session_cookie_domain = None
         self.query_log = True
+        self.try_restart_elastic = True     # Try restarting elasticsearch.service if it is down
 
         # Statistics calculated at runtime
         self.corpus_size = 0

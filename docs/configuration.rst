@@ -76,7 +76,7 @@ List of parameters
 
 - ``integer_meta_fields`` (list of strings) -- names of the sentence-level metadata fields that have integer values and therefore should be represented by ranges rather than by single text boxes in the query interface.
 
-- ``interface_languages`` (list of strings) -- list with codes of all available web interface languages.
+- ``interface_languages`` (list of strings) -- list with codes of all available :doc:`web interface languages </interface_languages>`.
 
 - ``keep_lemma_order`` (Boolean) -- whether the order of multiple analyses should be kept when a string with the lemmata is concatenated for displaying. Defaults to ``false``. For example, if a word has 3 analyses with the lemmara *B*, *A* and *B*, ``false`` means that the output string of lemmata will look like *A/B*, and ``true``, *B/A/B*. The latter may be needed if multiple analyses actually refer to different parts of a graphic word, e.g. host and clitics if they are represented as a single token.
 
@@ -124,7 +124,7 @@ List of parameters
 
 - ``media`` (Boolean) -- whether the corpus contains any aligned media (sound or video) files and, therefore, whether the media player should appear next to the search results. Defaults to ``false``. See also the ``video`` option.
 
-- ``multiple_choice_fields`` (dictionary) -- describes tag selection tables for word-level fields other that *Grammar* or *Gloss* and sentence-level metadata fields. Keys are field names, values are structured in the same way as ``gramm_selection`` above.
+- ``multiple_choice_fields`` (dictionary) -- describes tag selection tables for sentence-level metadata fields or word-level fields (other that *Grammar* or *Gloss*). Keys are field names, values are structured in the same way as ``gramm_selection`` above.
 
 - ``negative_search_enabled`` (Boolean) -- whether the negative search button should be present in the word query form. Defaults to ``true``.
 
@@ -145,6 +145,8 @@ List of parameters
 
 - ``search_remove_whitespaces`` (Boolean) -- whether all whitespaces should be deleted from the search textbox before making a non-keyword query, such as word or lemma query. Defaults to ``true``. The whitespaces are trimmed at the ends of the textboxes regardless of this parameter.
 
+- ``sent_id_sort_enabled`` (Boolean) -- whether the "sort by sentence ID" option is enabled in sentence search. Defaults to ``false``. If enabled, hits will be sorted in by document, and inside one document, in the order of their appearance there. Re-indexing needed if switching from ``false`` to ``true``. **ATTENTION!** If enabled, this option will allow to view sentences of the entire corpus in the correct sequence. Do not enable it if your texts are copyright-protected.
+
 - ``sentence_meta_values`` (dictionary) -- dictionary where keys are names of sentence-level metadata fields and values are lists of their respective values. You should use this dictionary for metadata fields that have short lists of allowed values. Instead of text boxes, such metadata fields will be represented by selectors where all values will be listed in the order specified in the lists.
 
 - ``sentence_meta`` (list of strings) -- list with names of the sentence-level metadata fields that should be available in word-level search queries.
@@ -154,6 +156,12 @@ List of parameters
 - ``start_page_url`` (string) -- a string with the URL of the start page of the corpus, if there is one. It is used to link the header of the search page to the start page.
 
 - ``transliterations`` (list of strings) -- list of supported transliterations. For each transliteration, there should be a function in ``/search/web_app/transliteration.py`` named ``trans_%TRANSLITERATION_NAME%_baseline`` that takes the text and the name of the language as input and returns transliterated text.
+
+- ``try_restart_elastic`` (Boolean) -- if local Elasticsearch is used and it seems to be down (no connection can be established when a client opens the search page), try starting it by running ``search/restart_elasticsearch.sh`` (only in Linux). Defaults to ``true``. Note that starting a service requires sudo privileges. In order for this to work without you manually entering your sudo password, the user who runs the app has to be allowed to use sudo without a password in this case. This can be achieved by running ``sudo visudo`` and adding the following line::
+
+    your_username   ALL=NOPASSWD:/usr/bin/systemctl start elasticsearch.service
+
+If you edit ``search/restart_elasticsearch.sh`` to use a different way of starting Elasticsearch service, you have to modify this line accordingly.
 
 - ``video`` (Boolean) -- whether the corpus has aligned video files. Defaults to ``false``. If it does, do not forget to set ``media`` to ``true``.
 

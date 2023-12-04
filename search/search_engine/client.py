@@ -1,7 +1,8 @@
 from elasticsearch import Elasticsearch, helpers
 from elasticsearch.client import IndicesClient
-import json
+import subprocess
 import os
+import json
 import time
 from .query_parsers import InterfaceQueryParser
 
@@ -98,6 +99,7 @@ class SearchClient:
 
     @log_if_needed
     def get_sentences(self, esQuery):
+        print(json.dumps(esQuery, ensure_ascii=False, indent=1))
         if self.settings.query_timeout > 0:
             hits = self.es.search(index=self.name + '.sentences',
                                   body=esQuery, request_timeout=self.settings.query_timeout)
@@ -179,6 +181,13 @@ class SearchClient:
         hits = self.es.search(index=self.name + '.words',
                               body=esQuery)
         return hits
+
+    def start_elastic_service(self):
+        """
+        Try to restart the system's Elasticsearch server.
+        """
+        subprocess.Popen(os.path.abspath('restart_elasticsearch.sh'), shell=True,
+                         stdout=subprocess.PIPE)
 
     def is_alive(self):
         """

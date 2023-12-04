@@ -35,8 +35,14 @@ def search_page():
     if request.query_string is not None:
         queryString = request.query_string.decode('utf-8')
     ready4work = settings.ready_for_work
+    sc.start_elastic_service()
     if settings.ready_for_work:
         ready4work = sc.is_alive()
+        if (not ready4work
+                and settings.try_restart_elastic
+                and (settings.elastic_url is None or len(settings.elastic_url) <= 0)):
+            # The local Elasticsearch server is down, try to restart it
+            sc.start_elastic_service()
     bMinimalistic = ('minimalistic' in request.url_rule.rule)
     locales = settings.interface_languages
     if type(locales) == list:
@@ -61,6 +67,7 @@ def search_page():
                            negative_search_enabled=settings.negative_search_enabled,
                            fulltext_search_enabled=settings.fulltext_search_enabled,
                            year_sort_enabled=settings.year_sort_enabled,
+                           sent_id_sort_enabled=settings.sent_id_sort_enabled,
                            debug=settings.debug,
                            subcorpus_selection=settings.search_meta,
                            sentence_meta=settings.sentence_meta,
@@ -68,6 +75,8 @@ def search_page():
                                                           ensure_ascii=False, indent=-1),
                            auto_switch_tiers=json.dumps(settings.auto_switch_tiers,
                                                         ensure_ascii=False, indent=-1),
+                           int_meta_fields=json.dumps(settings.integer_meta_fields,
+                                                      ensure_ascii=False, indent=-1),
                            generate_dictionary=settings.generate_dictionary,
                            citation=settings.citation,
                            start_page_url=settings.start_page_url,
@@ -367,6 +376,9 @@ def search_sent(page=-1):
     maxPageNumber = (min(hitsProcessed['n_sentences'], settings.max_hits_retrieve) - 1) \
                     // hitsProcessed['page_size'] + 1
     hitsProcessed['too_many_hits'] = (settings.max_hits_retrieve < hitsProcessed['n_sentences'])
+
+    if request.args and 'response_format' in request.args and request.args['response_format'] == 'json':
+        return jsonify(hitsProcessed)
 
     return render_template('search_results/result_sentences.html',
                            data=hitsProcessed,

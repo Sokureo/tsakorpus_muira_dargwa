@@ -37,7 +37,7 @@ Source files
 
 All source files have to have the same format and extension. If you want to include different types of files in the corpus, you have to create a separate corpus folder for each type, see Option 2 above.
 
-The source files should be placed in ``/src_convertors/corpus/%ext%``, where ``%ext%`` is their extension. If the extension is ``json``, you have to name this directory ``json_input`` to avoid name collision with the target directory. This directory can have any number of subdirectories of arbitrary depth. After the files have been converted, the resulting JSON files will be located in ``/src_convertors/corpus/json``. If you run CG3 disambiguation after that, the disambiguated JSON files will be located in ``src_convertors/corpus/json_disamb``. If you have a media-aligned corpus, the source media files have to be located next to the corresponding ELAN/EXMARaLDA/TEI files (and referenced there). The resulting media files (compressed and split into pieces) will appear in ``/src_convertors/corpus/media``.
+The source files should be placed in ``/src_convertors/corpus/%ext%``, where ``%ext%`` is their extension. If the extension is ``json``, you have to name this directory ``json_input`` to avoid name collision with the target directory. This directory can have any number of subdirectories of arbitrary depth. After the files have been converted, the resulting JSON files will be located in ``/src_convertors/corpus/json``. If you run CG3 disambiguation after that, the disambiguated JSON files will be located in ``src_convertors/corpus/json_disamb``. If you have a media-aligned corpus, the source media files have to be located next to the corresponding ELAN/EXMARaLDA/TEI files (and referenced there). The resulting media files (compressed and split into pieces) will appear in the directory that you set through the ``output_media_dir`` parameter. If this parameter is not set, they will appear in ``/src_convertors/corpus/media``.
 
 Configuration files
 -------------------
@@ -128,6 +128,8 @@ These parameters are taken into account in scenarios where Tsakorpus performs to
 
 - ``char_replacements`` (dictionary, optional) -- describes characters that should be replaced. Keys are characters to be replaced, values are strings they should be replaced with. Can be used e.g. for replacing lookalike special characters.
 
+- ``add_contextual_flags`` (Boolean, optional) -- whether punctuation-related ``flags`` field should be added automatically to each word. There is a pre-defined set of punctuation-related flags, e.g. ``comma``, ``quest_mark`` or ``quote`` (see ``src_convertors/simple_convertors/sentence_splitter.py`` for details). For example, if a word is preceded by a comma and followed by a question mark, it will get ``a:comma`` and ``b:quest_mark`` strings in the ``flags`` field. This way, the users can take punctuation into account when searching. This option only works in some of the convertors for now. 
+
 Morphological analysis
 ~~~~~~~~~~~~~~~~~~~~~~
 
@@ -153,6 +155,10 @@ If your texts are aligned with sound or video files, the following parameters ar
 - ``media_length`` (integer) -- the length of one media file piece in seconds. All media files will be split into overlapping pieces of that length, so that the user does not have to download the entire file to listen for one sentence.
 
 - ``media_dir`` (string, optional) -- path to the media files to be cut, if they are located in a different folder than the ELAN files.
+
+- ``output_media_dir`` (string, optional) -- path to the directory where cut media files will be stored, if different from the default (``/src_convertors/corpus/media``).
+
+If not absolute, the directory paths are relative to ``src_convertors``.
 
 The convertors
 --------------

@@ -7,6 +7,7 @@ processing the hits using response_processors.
 
 import copy
 import math
+import re
 import time
 from flask import request
 from . import sc, sentView, settings, MIN_TOTAL_FREQ_WORD_QUERY, rxIndexAtEnd
@@ -94,7 +95,7 @@ def get_buckets_for_doc_metafield(fieldName, langID=-1, docIDs=None, maxBuckets=
     innerQuery = {'match_all': {}}
     if docIDs is not None:
         innerQuery = {'ids': {'values': list(docIDs)}}
-    if not fieldName.startswith('year'):
+    if not (fieldName.startswith('year') or fieldName in settings.integer_meta_fields):
         queryFieldName = fieldName + '_kw'
     else:
         queryFieldName = fieldName
@@ -137,11 +138,11 @@ def get_buckets_for_doc_metafield(fieldName, langID=-1, docIDs=None, maxBuckets=
                           'n_docs': bucket['doc_count'],
                           'n_words': bucket['subagg_n_words']['value']}
         buckets.append(bucketListItem)
-    if not fieldName.startswith(('year', 'byear', 'birth_year')):
+    if not (fieldName.startswith('year') or fieldName in settings.integer_meta_fields):
         buckets.sort(key=lambda b: (-b['n_words'], -b['n_docs'], b['name']))
     else:
         buckets.sort(key=lambda b: b['name'])
-    if len(buckets) > 25 and not fieldName.startswith('year'):
+    if len(buckets) > 25 and not (fieldName.startswith('year') or fieldName in settings.integer_meta_fields):
         bucketsFirst = buckets[:25]
         lastBucket = {'name': '>>', 'n_docs': 0, 'n_words': 0}
         for i in range(25, len(buckets)):
@@ -163,7 +164,7 @@ def suggest_metafield(fieldName, query):
         return []
     if '*' not in query:
         query = '*' + query + '*'
-    if not fieldName.startswith('year'):
+    if not (fieldName.startswith('year') or fieldName in settings.integer_meta_fields):
         queryFieldName = fieldName + '_kw'
     else:
         queryFieldName = fieldName
@@ -298,7 +299,8 @@ def get_buckets_for_sent_metafield(fieldName, langID=-1, docIDs=None, maxBuckets
         queryFieldName = 'meta.' + fieldName
     else:
         queryFieldName = fieldName
-    if not queryFieldName.startswith('meta.year'):
+    if not (queryFieldName.startswith('meta.year') or (queryFieldName.startswith('meta.')
+                                                       and fieldName[5:] in settings.integer_meta_fields)):
         queryFieldName += '_kw'
     esQuery = {
         'query': innerQuery,
@@ -330,11 +332,11 @@ def get_buckets_for_sent_metafield(fieldName, langID=-1, docIDs=None, maxBuckets
             'n_words': bucket['subagg_n_words']['value']
         }
         buckets.append(bucketListItem)
-    if not fieldName.startswith(('year', 'byear', 'birth_year')):
+    if not (fieldName.startswith('year') or fieldName in settings.integer_meta_fields):
         buckets.sort(key=lambda b: (-b['n_words'], -b['n_sents'], b['name']))
     else:
         buckets.sort(key=lambda b: b['name'])
-    if len(buckets) > 25 and not fieldName.startswith('year'):
+    if len(buckets) > 25 and not (fieldName.startswith('year') or fieldName in settings.integer_meta_fields):
         bucketsFirst = buckets[:25]
         lastBucket = {'name': '>>', 'n_sents': 0, 'n_words': 0}
         for i in range(25, len(buckets)):
@@ -518,8 +520,9 @@ def find_sentences_json(page=0):
         page = 1
         change_display_options(query)
         sortOrder = get_session_data('sort')
-        if (sortOrder not in ('random', 'freq', 'year')
+        if (sortOrder not in ('random', 'freq', 'year', 'sent_id')
                 or sortOrder == 'year' and not settings.year_sort_enabled
+                or sortOrder == 'sent_id' and not settings.sent_id_sort_enabled
                 or sortOrder == '' and not settings.debug):
             set_session_data('sort', 'random')
         elif sortOrder == '':
@@ -665,6 +668,8 @@ def find_words_json(searchType='word', page=0):
     for iQueryWord in range(1, nWords + 1):
         if 'negq' + str(iQueryWord) in query and query['negq' + str(iQueryWord)] == 'on':
             negWords.append(iQueryWord)
+    rxWordIndexQueryFields = re.compile('^(?:sent_meta_.+|' + '|'.join(
+        re.escape(f) + '.*' for f in settings.accidental_word_fields) + ')$')
     if nWords > 1:
         # Multi-word search: instead of looking in the words index,
         # first find all occurrences in the sentences and then
@@ -679,8 +684,8 @@ def find_words_json(searchType='word', page=0):
             if distance_constraints_too_complex(wordConstraints):
                 constraintsTooComplex = True
     elif ('sentence_index1' in query and len(query['sentence_index1']) > 0
-          or any(k.startswith('sent_meta_')
-                 and len(query[k]) > 0 and query[k] not in ('*', '.*')
+          or any(rxWordIndexQueryFields.search(k) is not None
+                 and len(query[k]) > 0 and query[k] not in ('*', '.*', '^.*$')
                  for k in query)):
         # Sentence-level-meta query or query involving position in sentence
         searchIndex = 'sentences'
@@ -721,7 +726,7 @@ def find_words_json(searchType='word', page=0):
             cur_search_context().after_key = hits['aggregations']['agg_group_by_word']['after_key']
 
     elif searchIndex == 'sentences':
-        # Multi-word search (complicated)
+        # Multi-word search or search involving sentence meta (complicated)
         query['size'] = 0
         query['from'] = 0
         if len(cur_search_context().processed_words) <= 0:
