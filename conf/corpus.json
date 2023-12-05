@@ -1,10 +1,9 @@
 {
-  "elastic_url": "http://elastic:9200",
   "corpus_name": "muira",
   "start_page_url": "http://lingconlab.ru/muira_dargwa/",
   "input_format": "json",
   "debug": false,
-  "media": false,
+  "media": true,
   "video": false,
   "default_view": "glossed",
   "media_length": 60,

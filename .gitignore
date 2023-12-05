@@ -1,3 +1,5 @@
+000-default.conf
+Dockerfile
 **.pyc
 **.idea/**
 txt2json/corpus/json/**
