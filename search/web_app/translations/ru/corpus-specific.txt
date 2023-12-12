@@ -1,1 +1,3 @@
 corpus_title	Устный корпус муиринского даргинского
+langname_tanti	муиринский
+langname_cyrillic	кириллица

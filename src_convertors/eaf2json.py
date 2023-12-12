@@ -973,18 +973,4 @@ class Eaf2JSON(Txt2JSON):
 
 if __name__ == '__main__':
     t2j = Eaf2JSON()
-    # all_gloss_list = t2j.process_corpus(cutMedia=True)
-    # gloss_set = set(all_gloss_list)
-    # gloss_list_file = open('corpus/kadar/gloss_list.txt', 'w+', encoding='utf-8')
-    # gloss_list_file_read = gloss_list_file.read()
-    # if gloss_list_file_read:
-    #     gloss_list_file_write = set(gloss_list_file_read.split(' '))
-    #     gloss_set.update(gloss_list_file_write)
-    # gloss_list_file.write(' '.join(gloss_set))
-    #
-    # gramm = open('corpus/kadar/conf_conversion/grammRules.csv', 'w', encoding='utf-8')
-    # for gloss in gloss_set:
-    #     line = gloss + '\t' + gloss.lower() + '\n'
-    #     gramm.write(line)
-
-
+    t2j.process_corpus(cutMedia=True)

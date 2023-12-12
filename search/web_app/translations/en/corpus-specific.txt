@@ -1,1 +1,3 @@
 corpus_title	Spoken Corpus of Muira Dargwa
+langname_muira	Muira
+langname_cyrillic	Cyrillic
