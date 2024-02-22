@@ -15,13 +15,29 @@
   "query_timeout": 60,
   "year_sort_enabled": true,
   "viewable_meta": [
+    "file_name",
+    "title_rus",
+    "title_muira",
+    "speaker",
+    "recording_date",
+    "comment"
   ],
   "sentence_meta": [
   ],
   "search_meta": {
     "columns": [
+      [
+        {"type": "input_text", "name": "title_rus", "placeholder": "Название текста (русский)"},
+        {"type": "input_text", "name": "title_muira", "placeholder": "Название текста (муиринский)"}
+      ],
+      [
+        {"type": "input_text", "name": "speaker", "placeholder": "Рассказчик"},
+        {"type": "input_text", "name": "recording_date", "placeholder": "Дата записи"}
+      ]
     ],
     "stat_options": [
+      "file_name",
+      "speaker"
     ]
   },
   "word_fields":

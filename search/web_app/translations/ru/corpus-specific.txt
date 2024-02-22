@@ -1,3 +1,9 @@
 corpus_title	Устный корпус муиринского даргинского
 langname_tanti	муиринский
 langname_cyrillic	кириллица
+metafield_filename	Имя файла
+metafield_file_name	Имя файла
+metafield_title_rus	Название (русский)
+metafield_title_muira	Название (муиринский)
+metafield_recording_date	Дата записи
+metafield_comment	Комментарий

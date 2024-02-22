@@ -1070,6 +1070,9 @@ msgstr "Current place (post-level)"
 msgid "metafield_collector"
 msgstr "Collector"
 
+msgid "metafield_comment"
+msgstr "Comment"
+
 msgid "metafield_country"
 msgstr "Country"
 
@@ -1081,6 +1084,9 @@ msgstr "Date of translation"
 
 msgid "metafield_dialect"
 msgstr "Dialect"
+
+msgid "metafield_file_name"
+msgstr "Filename"
 
 msgid "metafield_filename"
 msgstr "File name"
@@ -1169,6 +1175,9 @@ msgstr "Publication"
 msgid "metafield_published"
 msgstr "Published"
 
+msgid "metafield_recording_date"
+msgstr "Date of recording"
+
 msgid "metafield_region"
 msgstr "Region"
 
@@ -1220,8 +1229,14 @@ msgstr "Title"
 msgid "metafield_title_en"
 msgstr "Title in English"
 
+msgid "metafield_title_muira"
+msgstr "Title (Muira)"
+
 msgid "metafield_title_ru"
 msgstr "Title in Russian"
+
+msgid "metafield_title_rus"
+msgstr "Title (Russian)"
 
 msgid "metafield_topic"
 msgstr "Topic"
